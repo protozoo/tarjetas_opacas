@@ -1,5 +1,7 @@
 'use strict';
 
+window.pool = {};
+
 angular
   .module('clientApp', [
     'ngCookies',
