@@ -10,22 +10,25 @@ angular.module('clientApp')
 
     $scope.massageData = function()
     {
+    	// Concatenate all data in a single table
     	pool.bigTable = [];
     	for (var i = 0; i < pool.dataset.people.length; i++) {
     		var person = pool.dataset.people[i];
     		for (var j = 0; j < person.entries.length; j++) {
     			var entry = person.entries[j];
+    			// Add the person name to each row for easy filtering/grouping
     			entry.personName = person.name;
+
+    			// Build a real Date object
     			pool.bigTable.push( entry );
     		};
     	};
     	console.log( "there are ", pool.bigTable.length, " entries in big table" );
 
     	// By activity
-    	var byActivity = _.groupBy( pool.bigTable, function(entry){
+    	pool.byActivity = _.groupBy( pool.bigTable, function(entry){
     		return entry.activity;
     	} );
-    	pool.byActivity = byActivity;
     	var byActivityArray = [];
     	for( var p in pool.byActivity ){
     		var sum = _.reduce( pool.byActivity[p], function(memo, entry){ return memo + entry.amount; }, 0);
@@ -33,6 +36,21 @@ angular.module('clientApp')
     		byActivityArray.push( newItem )
     	}
     	pool.byActivity = byActivityArray;
+    	pool.byActivity = _.sortBy( pool.byActivity, function(item){
+    		return -item.amount;
+    	} );
+
+    	// By commerce
+    	pool.byCommerce = _.groupBy( pool.bigTable, function(entry){
+    		return entry.commerce;
+    	} );
+    	var byCommerceArray = [];
+    	for( var p in pool.byCommerce ){
+    		var sum = _.reduce( pool.byCommerce[p], function(memo, entry){ return memo + entry.amount; }, 0);
+    		var newItem = { name:p, numEntries:pool.byCommerce[p].length, amount:sum };
+    		byCommerceArray.push( newItem )
+    	}
+    	pool.byCommerce = byCommerceArray;
     }
 
     $http.get('/data/output.json').
