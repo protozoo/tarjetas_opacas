@@ -172,8 +172,9 @@ angular.module('clientApp')
 		               .duration(200)
 		               .style("opacity", .9);
 		          tooltip.html( 
-		          	'<b style="font-size: 14px">' + d["name"] + "</b><br/> " + Math.floor( xValue(d) )+"€" 
-			        + " (" + yValue(d) + " movimientos)"
+		          	'<b style="font-size: 12px">' + d["name"] + "</b><br/> "
+		          	 + "<b>" + _.str.numberFormat( yValue(d), 0, ',', '.' ) + "</b> movimientos <br/>"
+		          	 + "<b>" + _.str.numberFormat( xValue(d), 2, ',', '.' )+"€</b>"
 			        )
 		               .style("left", (d3.event.pageX + 5) + "px")
 		               .style("top", (d3.event.pageY - 28) + "px");
