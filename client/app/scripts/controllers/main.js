@@ -41,7 +41,16 @@ angular.module('clientApp')
 	  	pool.dataset = data;
 	  	console.log( "there are ", data.people.length, " people in the dataset");
 	  	$scope.massageData();
-    	$scope.buildScatterPlot();
+    	$scope.buildScatterPlot( 
+    		pool.byActivity, 
+    		".jumbotron", 
+    		"Actividades", 
+    		"amount", 
+    		"numEntries", 
+    		"Importe", 
+    		"# Movimientos", 
+    		"sqrt" 
+    	);
 	    // this callback will be called asynchronously
 	    // when the response is available
 	  }).
@@ -52,7 +61,10 @@ angular.module('clientApp')
 	  });
 
 
-	$scope.buildScatterPlot = function(){
+	  /* Scatterplot coded from this example as a quick template:
+	  http://bl.ocks.org/weiglemc/6185069
+	  */
+	$scope.buildScatterPlot = function( data, containerSelector, chartName, xVar, yVar, xLabel, yLabel, scaleType ){
 		console.log( "buildScatterPlot()" );
 		var margin = {top: 20, right: 20, bottom: 30, left: 40},
 		    width = 900 - margin.left - margin.right,
@@ -66,8 +78,8 @@ angular.module('clientApp')
 		 */ 
 
 		// setup x 
-		var xValue = function(d) { return d.amount;}, // data -> value
-		    xScale = d3.scale.sqrt().range([0, width]), // value -> display
+		var xValue = function(d) { return d[xVar];}, // data -> value
+		    xScale = d3.scale[scaleType]().range([0, width]), // value -> display
 		    xMap = function(d) { return xScale(xValue(d));}, // data -> display
 		    xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(function(d){
 		     if( d > 1000000 ){
@@ -79,8 +91,8 @@ angular.module('clientApp')
 		 	});
 
 		// setup y
-		var yValue = function(d) { return d["numEntries"];}, // data -> value
-		    yScale = d3.scale.sqrt().range([height, 0]), // value -> display
+		var yValue = function(d) { return d[yVar];}, // data -> value
+		    yScale = d3.scale[scaleType]().range([height, 0]), // value -> display
 		    yMap = function(d) { return yScale(yValue(d));}, // data -> display
 		    yAxis = d3.svg.axis().scale(yScale).orient("left").tickFormat(function(d){
 		     if( d > 1000000 ){
@@ -95,8 +107,12 @@ angular.module('clientApp')
 		var cValue = function(d) { return d.Manufacturer;},
 		    color = d3.scale.category10();
 
+		var container = $( containerSelector );
+		container.append("<h2>" + chartName + "</h2>");
+
 		// add the graph canvas to the body of the webpage
-		var svg = d3.select(".jumbotron").append("svg")
+		var containerD3 = d3.select( containerSelector );
+		var svg = containerD3.append("svg")
 		    .attr("width", width + margin.left + margin.right)
 		    .attr("height", height + margin.top + margin.bottom)
 		  .append("g")
@@ -107,11 +123,10 @@ angular.module('clientApp')
 		    .attr("class", "tooltip")
 		    .style("opacity", 0);
 
-		var data = pool.byActivity;
 		  // change string (from CSV) into number format
 		  data.forEach(function(d) {
-		    d.amount = +d.amount;
-		    d["numEntries"] = +d["numEntries"];
+		    d[xVar] = +d[xVar];
+		    d[yVar] = +d[yVar];
 		//    console.log(d);
 		  });
 
@@ -129,7 +144,7 @@ angular.module('clientApp')
 		      .attr("x", width)
 		      .attr("y", -6)
 		      .style("text-anchor", "end")
-		      .text("Importe");
+		      .text( xLabel );
 
 		  // y-axis
 		  svg.append("g")
@@ -141,7 +156,7 @@ angular.module('clientApp')
 		      .attr("y", 6)
 		      .attr("dy", ".71em")
 		      .style("text-anchor", "end")
-		      .text("# Movimientos");
+		      .text( yLabel);
 
 		  // draw dots
 		  svg.selectAll(".dot")
@@ -156,8 +171,10 @@ angular.module('clientApp')
 		          tooltip.transition()
 		               .duration(200)
 		               .style("opacity", .9);
-		          tooltip.html(d["name"] + "<br/> (" + xValue(d) 
-			        + ", " + yValue(d) + ")")
+		          tooltip.html( 
+		          	'<b style="font-size: 14px">' + d["name"] + "</b><br/> " + Math.floor( xValue(d) )+"€" 
+			        + " (" + yValue(d) + " movimientos)"
+			        )
 		               .style("left", (d3.event.pageX + 5) + "px")
 		               .style("top", (d3.event.pageY - 28) + "px");
 		      })
