@@ -11,7 +11,7 @@ El objetivo de este repositorio es facilitar la carga de dichos datos en un form
 --
 
 *Actualización:
-El periódico ElDiario.es ha publicado los datos en formato MS Excel, que pueden descargarse aquí: http://www.publico.es/549352/asi-se-lo-gastaron-los-86-de-caja-madrid*
+El periódico Público.es ha publicado los datos en formato MS Excel, que pueden descargarse aquí: http://www.publico.es/549352/asi-se-lo-gastaron-los-86-de-caja-madrid*
 
 - - - - -
 
@@ -25,4 +25,4 @@ The goal of this repository is to provide a more convenient format for those int
 --
 
 *Update:
-Newspaper ElDiario.es has published the dataset in MS Excel format. It can be downloaded here: http://www.publico.es/549352/asi-se-lo-gastaron-los-86-de-caja-madrid*
+Newspaper Público.es has published the dataset in MS Excel format. It can be downloaded here: http://www.publico.es/549352/asi-se-lo-gastaron-los-86-de-caja-madrid*
